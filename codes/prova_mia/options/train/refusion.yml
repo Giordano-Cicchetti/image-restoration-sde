@@ -7,7 +7,7 @@ gpu_ids: [0]
 
 sde:
   max_sigma: 50
-  T: 100
+  T: 50
   schedule: cosine # linear, cosine
   eps: 0.005
 
@@ -60,11 +60,11 @@ path:
 
 #### training settings: learning rate scheme, loss
 train:
-  optimizer: Lion # Adam, AdamW, Lion
-  lr_G: !!float 4e-5
+  optimizer: AdamW # Adam, AdamW, Lion
+  lr_G: !!float 2e-4
   lr_scheme: TrueCosineAnnealingLR
   beta1: 0.9
-  beta2: 0.99
+  beta2: 0.999
   niter: 700000
   warmup_iter: -1  # no warm up
   lr_steps: [200000, 400000, 600000]

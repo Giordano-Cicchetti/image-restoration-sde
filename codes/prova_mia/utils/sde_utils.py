@@ -803,7 +803,7 @@ class GeneralDiffusion(SDE):
 
         #Determine alpha
         alpha = timesteps / self.T 
-
+        alpha = alpha.to(self.device)
 
         #state_mean = self.mu_bar(x0, timesteps)
         #noises = torch.randn_like(state_mean)
