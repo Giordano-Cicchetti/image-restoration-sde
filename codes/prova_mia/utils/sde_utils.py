@@ -711,7 +711,7 @@ class GeneralDiffusion(SDE):
         T = self.T if T < 0 else T
         x = xt.clone()
         for t in tqdm(reversed(range(1, T + 1))):
-            score = self.score_fn(x, t, **kwargs)
+            score = self.noise_fn(x, t, **kwargs)
             alpha_t = t/self.T
             alpha_t_minus_one = (t-1)/self.T
 

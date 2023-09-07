@@ -278,6 +278,19 @@ def main():
                     model.test(sde)
                     visuals = model.get_current_visuals()
 
+                    output = visuals["Output"].squeeze()  # uint8
+                    gt_img = visuals["GT"].squeeze()  # uint8
+
+                    # calculate PSNR
+                    psnr = util.calculate_psnr(output, gt_img)
+                    ssim = util.calculate_ssim(output, gt_img)
+                    mse  = util.calculate_mse(output, gt_img)
+
+                    avg_psnr += psnr
+                    avg_ssim += ssim
+                    avg_mse  += mse
+
+
                     output = util.tensor2img(visuals["Output"].squeeze())  # uint8
                     gt_img = util.tensor2img(visuals["GT"].squeeze())  # uint8
 
@@ -285,18 +298,15 @@ def main():
                     cv2.imwrite("/content/original.png",gt_img)
 
 
-                    # calculate PSNR
-                    avg_psnr += util.calculate_psnr(output, gt_img)
-                    avg_ssim += util.calculate_ssim(output, gt_img)
-                    avg_mse  += util.calculate_mse(output, gt_img)
+                    
 
-                    print(f"avg psnr= {avg_psnr}")
-                    print(f"avg_ssim= {avg_ssim}")
-                    print(f"avg_mse= {avg_mse}")
+                    print(f"psnr= {psnr}")
+                    print(f"ssim= {ssim}")
+                    print(f"mse= {mse}")
 
                     idx += 1
                     a+=1
-                    if a==2:
+                    if a==4:
                       break
 
                 avg_psnr = avg_psnr / idx
@@ -315,8 +325,8 @@ def main():
                         epoch, current_step, avg_psnr
                     )
                 )
-                print("<epoch:{:3d}, iter:{:8,d}, psnr: {:.6f}".format(
-                        epoch, current_step, avg_psnr
+                print("<epoch:{:3d}, iter:{:8,d}, psnr: {:.6f}, mse: {:.6f}, ssim:{:.6f}".format(
+                        epoch, current_step, avg_psnr, avg_mse, avg_ssim
                     ))
                 # tensorboard logger
                 if opt["use_tb_logger"] and "debug" not in opt["name"]:
