@@ -139,10 +139,11 @@ class DenoisingModel(BaseModel):
         #xt_1_expection = sde.reverse_sde_step_mean(self.state, score, timesteps)
         #xt_1_optimum = sde.reverse_optimum_step(self.state, self.state_0, timesteps)
         #loss = self.weight * self.loss_fn(xt_1_expection, xt_1_optimum)
-        epsilon=0.001
-        error = self.state_0 - noise
-        loss = torch.mean(torch.sqrt(error**2 + epsilon**2))
+        #epsilon=0.001
+        #error = self.state_0 - noise
+        #loss = torch.mean(torch.sqrt(error**2 + epsilon**2))
         
+        loss = self.weight * self.loss_fn(self.state_0, noise)
 
         loss.backward()
         self.optimizer.step()

@@ -264,6 +264,8 @@ def main():
             # validation, to produce ker_map_list(fake)
             if current_step % opt["train"]["val_freq"] == 0 and rank <= 0:
                 avg_psnr = 0.0
+                avg_mse  = 0.0
+                avg_ssim = 0.0
                 idx = 0
                 a=0
                 for _, val_data in enumerate(val_loader):
@@ -285,13 +287,21 @@ def main():
 
                     # calculate PSNR
                     avg_psnr += util.calculate_psnr(output, gt_img)
-                    print(avg_psnr)
+                    avg_ssim += util.calculate_ssim(output, gt_img)
+                    avg_mse  += util.calculate_mse(output, gt_img)
+
+                    print(f"avg psnr= {avg_psnr}")
+                    print(f"avg_ssim= {avg_ssim}")
+                    print(f"avg_mse= {avg_mse}")
+
                     idx += 1
                     a+=1
                     if a==2:
                       break
 
                 avg_psnr = avg_psnr / idx
+                avg_mse = avg_mse / idx
+                avg_ssim = avg_ssim / idx
 
                 if avg_psnr > best_psnr:
                     best_psnr = avg_psnr
@@ -311,6 +321,8 @@ def main():
                 # tensorboard logger
                 if opt["use_tb_logger"] and "debug" not in opt["name"]:
                     tb_logger.add_scalar("psnr", avg_psnr, current_step)
+                    tb_logger.add_scalar("mse", avg_mse, current_step)
+                    tb_logger.add_scalar("ssim", avg_ssim, current_step)
 
             if error.value:
                 sys.exit(0)
