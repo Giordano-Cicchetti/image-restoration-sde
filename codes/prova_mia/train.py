@@ -283,16 +283,19 @@ def main():
 
                     # calculate PSNR
                     psnr = util.calculate_psnr(output, gt_img)
-                    ssim = util.calculate_ssim(output, gt_img)
+                    
                     mse  = util.calculate_mse(output, gt_img)
 
                     avg_psnr += psnr
-                    avg_ssim += ssim
+                    
                     avg_mse  += mse
 
 
                     output = util.tensor2img(visuals["Output"].squeeze())  # uint8
                     gt_img = util.tensor2img(visuals["GT"].squeeze())  # uint8
+
+                    ssim = util.calculate_ssim(output, gt_img)
+                    avg_ssim += ssim
 
                     cv2.imwrite("/content/cleaned.png",output)
                     cv2.imwrite("/content/original.png",gt_img)
