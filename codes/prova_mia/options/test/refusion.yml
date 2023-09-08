@@ -6,7 +6,7 @@ gpu_ids: [0]
 
 sde:
   max_sigma: 50
-  T: 100
+  T: 50
   schedule: cosine # linear, cosine
   eps: 0.005
   
@@ -16,24 +16,24 @@ degradation:
   noise_type: G # Gaussian noise: G
 
   # for super-resolution
-  scale: 4
+  scale: 1
 
 datasets:
   test1:
     name: Test_Dataset
     mode: LQGT
-    dataroot_GT: /home/ziwlu/datasets/ntire2023/shadow/val/GT
-    dataroot_LQ: /home/ziwlu/datasets/ntire2023/shadow/val/LQ
+    dataroot_GT: /content/Shabby_pages_1000/test/clean
+    dataroot_LQ: /content/Shabby_pages_1000/test/shabby
 
 #### network structures
 network_G:
   which_model_G: ConditionalNAFNet
   setting:
-    width: 64
-    enc_blk_nums: [1, 1, 1, 28]
-    middle_blk_num: 1
+    width: 32
+    enc_blk_nums: [1, 1, 2, 4]
+    middle_blk_num: 6
     dec_blk_nums: [1, 1, 1, 1]
 
 #### path
 path:
-  pretrain_model_G: pretrained/refusion.pth
+  pretrain_model_G: 25000.pth

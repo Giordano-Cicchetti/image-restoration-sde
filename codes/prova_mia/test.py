@@ -142,8 +142,8 @@ for test_loader in test_loaders:
                     crop_border:-crop_border, crop_border:-crop_border
                 ]
 
-            psnr = util.calculate_psnr(cropped_sr_img * 255, cropped_gt_img * 255)
-            ssim = util.calculate_ssim(cropped_sr_img * 255, cropped_gt_img * 255)
+            psnr = util.calculate_psnr(cropped_sr_img , cropped_gt_img )
+            ssim = util.calculate_ssim(cropped_sr_img , cropped_gt_img )
             lp_score = lpips_fn(
                 GT.to(device) * 2 - 1, SR_img.to(device) * 2 - 1).squeeze().item()
 
