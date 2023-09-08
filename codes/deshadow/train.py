@@ -264,34 +264,57 @@ def main():
             # validation, to produce ker_map_list(fake)
             if current_step % opt["train"]["val_freq"] == 0 and rank <= 0:
                 avg_psnr = 0.0
+                avg_mse  = 0.0
+                avg_ssim = 0.0
                 idx = 0
                 a=0
                 for _, val_data in enumerate(val_loader):
 
                     LQ, GT = val_data["LQ"], val_data["GT"]
-                    noisy_state = sde.noise_state(LQ)
+                    noisy_state = LQ  #sde.noise_state(LQ)
 
                     # valid Predictor
                     model.feed_data(noisy_state, LQ, GT)
                     model.test(sde)
                     visuals = model.get_current_visuals()
 
+                    output = visuals["Output"].squeeze()  # uint8
+                    gt_img = visuals["GT"].squeeze()  # uint8
+
+                    # calculate PSNR
+                    psnr = util.calculate_psnr(output, gt_img)
+                    
+                    mse  = util.calculate_mse(output, gt_img)
+
+                    avg_psnr += psnr
+                    
+                    avg_mse  += mse
+
+
                     output = util.tensor2img(visuals["Output"].squeeze())  # uint8
                     gt_img = util.tensor2img(visuals["GT"].squeeze())  # uint8
+
+                    ssim = util.calculate_ssim(output, gt_img)
+                    avg_ssim += ssim
 
                     cv2.imwrite("/content/cleaned.png",output)
                     cv2.imwrite("/content/original.png",gt_img)
 
 
-                    # calculate PSNR
-                    avg_psnr += util.calculate_psnr(output, gt_img)
-                    print(avg_psnr)
+                    
+
+                    print(f"psnr= {psnr}")
+                    print(f"ssim= {ssim}")
+                    print(f"mse= {mse}")
+
                     idx += 1
                     a+=1
-                    if a==2:
+                    if a==4:
                       break
 
                 avg_psnr = avg_psnr / idx
+                avg_mse = avg_mse / idx
+                avg_ssim = avg_ssim / idx
 
                 if avg_psnr > best_psnr:
                     best_psnr = avg_psnr
@@ -305,12 +328,14 @@ def main():
                         epoch, current_step, avg_psnr
                     )
                 )
-                print("<epoch:{:3d}, iter:{:8,d}, psnr: {:.6f}".format(
-                        epoch, current_step, avg_psnr
+                print("<epoch:{:3d}, iter:{:8,d}, psnr: {:.6f}, mse: {:.6f}, ssim:{:.6f}".format(
+                        epoch, current_step, avg_psnr, avg_mse, avg_ssim
                     ))
                 # tensorboard logger
                 if opt["use_tb_logger"] and "debug" not in opt["name"]:
                     tb_logger.add_scalar("psnr", avg_psnr, current_step)
+                    tb_logger.add_scalar("mse", avg_mse, current_step)
+                    tb_logger.add_scalar("ssim", avg_ssim, current_step)
 
             if error.value:
                 sys.exit(0)
