@@ -103,7 +103,7 @@ for test_loader in test_loaders:
 
         model.feed_data(noisy_state, LQ, GT)
         tic = time.time()
-        model.test(sde, save_states=True)
+        model.test(LQ, save_states=True)
         toc = time.time()
         test_times.append(toc - tic)
 
@@ -166,7 +166,7 @@ for test_loader in test_loaders:
                             crop_border:-crop_border, crop_border:-crop_border
                         ]
                     psnr_y = util.calculate_psnr(
-                        cropped_sr_img_y * 255, cropped_gt_img_y * 255
+                        cropped_sr_img_y  , cropped_gt_img_y 
                     )
                     ssim_y = util.calculate_ssim(
                         cropped_sr_img_y * 255, cropped_gt_img_y * 255
