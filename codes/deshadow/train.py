@@ -309,7 +309,7 @@ def main():
 
                     idx += 1
                     a+=1
-                    if a==4:
+                    if a==10:
                       break
 
                 avg_psnr = avg_psnr / idx
