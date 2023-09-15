@@ -60,9 +60,10 @@ def parse(opt_path, is_train=True):
     for key, path in opt["path"].items():
         if path and key in opt["path"] and key != "strict_load":
             opt["path"][key] = osp.expanduser(path)
-    opt["path"]["root"] = osp.abspath(
-        osp.join(__file__, osp.pardir, osp.pardir, osp.pardir, osp.pardir)
-    )
+    opt["path"]["root"] = "/content/drive/MyDrive"
+    #osp.abspath(
+    #    osp.join(__file__, osp.pardir, osp.pardir, osp.pardir, osp.pardir)
+    #)
     path = osp.abspath(__file__)
     config_dir = path.split("/")[-2]
     if is_train:

@@ -1,5 +1,5 @@
 #### general settings
-name: refusion
+name: refusion_train
 use_tb_logger: true
 model: denoising
 distortion: deshadow
@@ -30,7 +30,7 @@ datasets:
 
     use_shuffle: true
     n_workers: 2  # per GPU
-    batch_size: 8
+    batch_size: 4
     GT_size: 256
     LR_size: 256
     use_flip: False
@@ -82,4 +82,4 @@ train:
 #### logger
 logger:
   print_freq: 100
-  save_checkpoint_freq:  !!float 5e3
+  save_checkpoint_freq:  !!float 3e3
